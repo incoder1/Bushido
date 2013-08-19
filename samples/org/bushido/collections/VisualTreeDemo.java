@@ -22,8 +22,8 @@ import javax.swing.text.StyledDocument;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.bushido.tree.SwingTreeModel;
-import org.bushido.tree.Tree;
+import org.bushido.collections.tree.SwingTreeModel;
+import org.bushido.collections.tree.Tree;
 
 public final class VisualTreeDemo extends JFrame {
 
