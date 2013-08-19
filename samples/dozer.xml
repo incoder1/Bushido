@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	<!-- private boolean boolField; private byte byteField; private short shortField; 
+		private int intField; private long longField; private char charField; private 
+		float floatField; private double doubleField; private String stringField; -->
+	<mapping>
+		<class-a>org.bushido.samples.beans.InjectBean</class-a>
+		<class-b>org.bushido.samples.beans.Level0</class-b>
+		<field>
+			<a>byteField</a>
+			<b>level1.level2.byteField</b>
+		</field>
+		<field>
+			<a>shortField</a>
+			<b>level1.level2.shortField</b>
+		</field>
+		<field>
+			<a>intField</a>
+			<b>level1.level2.intField</b>
+		</field>
+		<field>
+			<a>longField</a>
+			<b>level1.level2.longField</b>
+		</field>
+		<field>
+			<a>charField</a>
+			<b>level1.level2.charField</b>
+		</field>
+		<field>
+			<a>floatField</a>
+			<b>level1.level2.floatField</b>
+		</field>
+		<field>
+			<a>doubleField</a>
+			<b>level1.level2.doubleField</b>
+		</field>
+		<field>
+			<a>stringField</a>
+			<b>level1.level2.stringField</b>
+		</field>
+	</mapping>
+</mappings>
