@@ -16,17 +16,11 @@ package org.bushido.collections.tree;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.swing.tree.TreeNode;
 
 import org.bushido.collections.queues.Queues;
 import org.bushido.collections.queues.Stack;
@@ -65,7 +59,7 @@ import org.bushido.collections.queues.Stack;
  * @author Victor Gubin
  * 
  */
-public class Tree<T> implements Iterable<Tree.Node<T>> {
+public class Tree<T> implements Iterable<Node<T>> {
 
 	/**
 	 * Root {@code Node<T>} of tree
@@ -279,8 +273,8 @@ public class Tree<T> implements Iterable<Tree.Node<T>> {
 	 */
 	public boolean contains(final Node<T> node) {
 		Node<T> root = node;
-		while (null != root.parent) {
-			root = root.parent;
+		while (null != root.getParent()) {
+			root = root.getParent();
 		}
 		return root == this.root;
 	}
@@ -302,7 +296,7 @@ public class Tree<T> implements Iterable<Tree.Node<T>> {
 		this.forEachNode(new NodeVisitor<T>() {
 			@Override
 			public void visitNode(final Node<T> node) {
-				if (0 == comparator.compare(node.value, value)) {
+				if (0 == comparator.compare(node.getValue(), value)) {
 					result.add(node);
 				}
 			}
@@ -470,327 +464,6 @@ public class Tree<T> implements Iterable<Tree.Node<T>> {
 		});
 		// '+' '│' '└' '├' '─'
 		return result.toString();
-	}
-
-/**
-	 * Notification for walking over tree
-	 * @see {@link Tree#forEachNode<T>(Node<T>, Node<T>Visitor)
-	 * @see {@link Tree#forEachNode<T>(Node<T>Visitor)
-	 * @param <T> type of tree
-	 */
-	public static interface NodeVisitor<T> {
-		public void visitNode(Tree.Node<T> node);
-	}
-
-	/**
-	 * Represent tree node
-	 */
-	public static class Node<T> implements Iterable<Node<T>>, TreeNode {
-
-		private final Lock lock;
-
-		private T value;
-
-		private Node<T> parent;
-
-		private Node<T> next;
-
-		private Node<T> firstChild;
-
-		private Node<T> lastChild;
-
-		private Node(final Node<T> parent, final T value) {
-			this.lock = new ReentrantLock();
-			this.value = value;
-			this.firstChild = null;
-			this.lastChild = null;
-		}
-
-		/**
-		 * Returns parent of this node
-		 * 
-		 * @return parent node
-		 */
-		public Node<T> getParent() {
-			return parent;
-		}
-
-		/**
-		 * Returns next child node of this node parent if any
-		 * 
-		 * @return next child node of this node parent or {@code null} if there
-		 *         is no next child
-		 */
-		public Node<T> getNext() {
-			return next;
-		}
-
-		/**
-		 * Returns node value
-		 * 
-		 * @return node value
-		 */
-		public T getValue() {
-			return value;
-		}
-
-		/**
-		 * Set node value
-		 * 
-		 * @param value
-		 *            the value to set
-		 */
-		public void setValue(T value) {
-			this.value = value;
-		}
-
-		private void appendChild(final Node<T> node) {
-			lock.lock();
-			try {
-				if (null == this.firstChild) {
-					this.firstChild = node;
-					this.lastChild = this.firstChild;
-				} else {
-					lastChild.next = node;
-					lastChild = node;
-				}
-				node.parent = this;
-			} finally {
-				lock.unlock();
-			}
-		}
-
-		private Node<T> findPervNode(Node<T> node) {
-			Node<T> result = this.firstChild;
-			while ((node != result.next) || (null != result.next)) {
-				result = result.next;
-			}
-			return result;
-		}
-
-		private Node<T> removeChild(final Node<T> node) {
-			lock.lock();
-			try {
-				if (node == this.firstChild) {
-					this.firstChild = this.firstChild.next;
-				} else {
-					final Node<T> prev = this.findPervNode(node);
-					if (null == prev) {
-						return null;
-					}
-					prev.next = node.next;
-				}
-			} finally {
-				lock.unlock();
-			}
-			return node;
-		}
-
-		/**
-		 * Returns whether this node has child's
-		 * 
-		 * @return whether node has child
-		 */
-		public boolean hasChilds() {
-			return null != this.firstChild;
-		}
-
-		/**
-		 * Count this node children
-		 * 
-		 * @return child's count
-		 */
-		public int getChildCount() {
-			int result = 0;
-			Node<T> child = this.firstChild;
-			while (child != null) {
-				++result;
-				child = child.next;
-			}
-			return result;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public boolean isLeaf() {
-			return null == this.firstChild;
-		}
-
-		/**
-		 * Return {@code true} if this node is last child of parent node
-		 * 
-		 * @return whether this node is last child of it parent
-		 */
-		public boolean isLastChild() {
-			return this.next == null;
-		}
-
-		/**
-		 * Return {@code true} if this node is last child of {@code node}
-		 * 
-		 * @param node
-		 *            an parent node
-		 * @return whether this node is last child of {@code node}
-		 */
-		public boolean isLastChildOf(final Node<T> node) {
-			return this.parent == node && null == this.next;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Iterable#iterator()
-		 */
-		@Override
-		public Iterator<Node<T>> iterator() {
-			final Node<T> begin = new Node<T>(this.parent, null);
-			begin.next = this.firstChild;
-			return new NodeIterator<T>(begin);
-		}
-
-		@Override
-		public TreeNode getChildAt(int childIndex) {
-			Node<T> child = this.firstChild;
-			for (int i = 0; i != childIndex && child.next != null; i++) {
-				child = child.next;
-			}
-			return child;
-		}
-
-		@Override
-		public int getIndex(TreeNode node) {
-			@SuppressWarnings("unchecked")
-			final Node<T> parent = (Node<T>) node;
-			int result = -1;
-			if (parent != this.parent) {
-				result = -1;
-			} else {
-				result = 0;
-				for (Node<T> it : parent) {
-					++result;
-					if (it == this) {
-						break;
-					}
-				}
-			}
-			return result;
-		}
-
-		@Override
-		public boolean getAllowsChildren() {
-			return !isLeaf();
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		public Enumeration<Node<T>> children() {
-			return (Enumeration<Node<T>>) iterator();
-		}
-
-		@Override
-		public String toString() {
-			return getValue().toString();
-		}
-
-	}
-
-	private static class NodeIterator<T> implements Iterator<Node<T>>,
-			Enumeration<Node<T>> {
-
-		private Node<T> current;
-
-		public NodeIterator(final Node<T> current) {
-			this.current = current;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Iterator#hasNext()
-		 */
-		@Override
-		public boolean hasNext() {
-			return (null != this.current) && (this.current.getNext() != null);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Iterator#next()
-		 */
-		@Override
-		public Node<T> next() {
-			if (!this.hasNext()) {
-				throw new NoSuchElementException();
-			}
-			this.current = current.getNext();
-			return current;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Iterator#remove()
-		 */
-		@Override
-		public void remove() {
-			this.current.getParent().removeChild(this.current);
-			this.current = current.getNext();
-		}
-
-		@Override
-		public boolean hasMoreElements() {
-			return hasNext();
-		}
-
-		@Override
-		public Node<T> nextElement() {
-			return next();
-		}
-
-	}
-
-	private static class PreOrderTreeIterator<T> implements Iterator<Node<T>> {
-
-		private final Stack<Node<T>> stack;
-
-		public PreOrderTreeIterator(final Node<T> root) {
-			this.stack = Queues.stack();
-			stack.push(root);
-		}
-
-		@Override
-		public boolean hasNext() {
-			return !stack.isEmpty();
-		}
-
-		@Override
-		public Node<T> next() {
-			final Node<T> result = stack.pop();
-			if (result.hasChilds()) {
-				final Stack<Node<T>> childsStack = Queues.stack();
-				for (Node<T> child : result) {
-					childsStack.push(child);
-				}
-				while (!childsStack.isEmpty()) {
-					stack.push(childsStack.pop());
-				}
-			}
-			return result;
-		}
-
-		@Override
-		public void remove() {
-			final Node<T> current = stack.peek();
-			final Node<T> parrent = current.getParent();
-			if (null == parrent) {
-				throw new IllegalStateException("Can't remove root node");
-			} else {
-				parrent.removeChild(current);
-			}
-		}
-
 	}
 
 }

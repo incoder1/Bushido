@@ -3,15 +3,16 @@
  */
 package org.bushido.collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.bushido.tree.Tree;
-import org.bushido.tree.Tree.NodeVisitor;
+import org.bushido.collections.tree.Node;
+import org.bushido.collections.tree.NodeVisitor;
+import org.bushido.collections.tree.Tree;
 import org.junit.Test;
 
 /**
@@ -31,10 +32,10 @@ public class TreeTestCase {
 
 	private final String[] FOR_EACH_PATH = { "root", "level1-0", "level2-0",
 			"level3-0", "level4-0", "level1-1", "level1-2" };
-	
+
 	private Tree<String> createTestTree() {
 		final Tree<String> tree = new Tree<String>("root");
-		Tree.Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
+		Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
 		next = tree.appendChild(next, "level2-0");
 		next = tree.appendChild(next, "level3-0");
 		next = tree.appendChild(next, "level4-0");
@@ -49,7 +50,7 @@ public class TreeTestCase {
 		final List<String> path = new ArrayList<String>(7);
 		tree.forEachNode(tree.getRoot(), new NodeVisitor<String>() {
 			@Override
-			public void visitNode(Tree.Node<String> node) {
+			public void visitNode(Node<String> node) {
 				path.add(node.getValue());
 			}
 		});
@@ -58,15 +59,13 @@ public class TreeTestCase {
 		assertArrayEquals("Wrong visit path", FOR_EACH_PATH, actualPaht);
 	}
 
-
-
 	@Test
 	public void testFastForEachNode() throws Exception {
 		final Tree<String> tree = createTestTree();
 		final List<String> path = new ArrayList<String>(7);
 		tree.fastForEachNode(tree.getRoot(), new NodeVisitor<String>() {
 			@Override
-			public void visitNode(Tree.Node<String> node) {
+			public void visitNode(Node<String> node) {
 				path.add(node.getValue());
 			}
 		});
@@ -79,7 +78,7 @@ public class TreeTestCase {
 	public void testPerorderIterator() throws Exception {
 		final Tree<String> tree = createTestTree();
 		final List<String> path = new ArrayList<String>(7);
-		for (Tree.Node<String> node : tree) {
+		for (Node<String> node : tree) {
 			path.add(node.getValue());
 		}
 		final String actualPaht[] = new String[7];
@@ -97,7 +96,7 @@ public class TreeTestCase {
 	public void testAsList() {
 		final Tree<String> tree = new Tree<String>("root");
 		// level 1
-		Tree.Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
+		Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
 		tree.appendChild(tree.getRoot(), "level1-1");
 		// level 2
 		tree.appendChild(next, "level2-0");
@@ -114,7 +113,7 @@ public class TreeTestCase {
 	public void testToString() {
 		final Tree<String> tree = new Tree<String>("root");
 		// level 1
-		Tree.Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
+		Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
 		tree.appendChild(tree.getRoot(), "level1-1");
 		tree.appendChild(tree.appendChild(tree.getRoot(), "level1-2"),
 				"level2-2");
@@ -123,10 +122,10 @@ public class TreeTestCase {
 		// level 2
 		tree.appendChild(next, "level2-0");
 		next = tree.appendChild(next, "level2-1");
-		Tree.Node<String> level2_1 = next;
+		Node<String> level2_1 = next;
 		// level 3
 		next = tree.appendChild(next, "level3-0");
-		Tree.Node<String> level3_0 = next;
+		Node<String> level3_0 = next;
 		tree.appendChild(next, "level4-0");
 		next = tree.appendChild(next, "level4-1");
 		next = tree.appendChild(next, "level5-0");
@@ -152,7 +151,7 @@ public class TreeTestCase {
 	public void testAppendTree() throws Exception {
 		final Tree<String> tree = new Tree<String>("OrignialRoot");
 		final Tree<String> appended = new Tree<String>("AppendedRoot");
-		Tree.Node<String> next = appended.appendChild(appended.getRoot(),
+		Node<String> next = appended.appendChild(appended.getRoot(),
 				"Appended Level1 0");
 		appended.appendChild(next, "Appended Level2 0");
 		tree.appendTree(tree.getRoot(), appended);
@@ -163,14 +162,13 @@ public class TreeTestCase {
 	public void testLCA() throws Exception {
 		final Tree<String> tree = new Tree<String>("root");
 		// level 1
-		Tree.Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
-		final Tree.Node<String> first = tree.appendChild(tree.getRoot(),
-				"level1-1");
+		Node<String> next = tree.appendChild(tree.getRoot(), "level1-0");
+		final Node<String> first = tree.appendChild(tree.getRoot(), "level1-1");
 		// level 2
 		tree.appendChild(next, "level2-0");
 		next = tree.appendChild(next, "level2-1");
 		// level 3
-		final Tree.Node<String> second = tree.appendChild(next, "level3-0");
+		final Node<String> second = tree.appendChild(next, "level3-0");
 		assertEquals("LCA is incorret", tree.getRoot(),
 				tree.findLCA(first, second));
 	}
@@ -179,7 +177,7 @@ public class TreeTestCase {
 	public void testTestFindNodeByValue() throws Exception {
 		final Tree<String> tree = new Tree<String>("root");
 		// level 1
-		Tree.Node<String> level = tree.appendChild(tree.getRoot(), "A");
+		Node<String> level = tree.appendChild(tree.getRoot(), "A");
 		level = tree.appendChild(level, "B");
 		level = tree.appendChild(tree.getRoot(), "C");
 		tree.appendChild(level, "A");

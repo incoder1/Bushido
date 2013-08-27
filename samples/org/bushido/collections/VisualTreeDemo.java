@@ -22,6 +22,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.bushido.collections.tree.Node;
 import org.bushido.collections.tree.SwingTreeModel;
 import org.bushido.collections.tree.Tree;
 
@@ -114,7 +115,7 @@ public final class VisualTreeDemo extends JFrame {
 	private Tree<String> testTree() {
 		final Tree<String> result = new Tree<String>("root");
 		// level 1
-		Tree.Node<String> next = result.appendChild(result.getRoot(),
+		Node<String> next = result.appendChild(result.getRoot(),
 				"level1-0");
 		result.appendChild(result.getRoot(), "level1-1");
 		result.appendChild(result.appendChild(result.getRoot(), "level1-2"),
@@ -124,10 +125,10 @@ public final class VisualTreeDemo extends JFrame {
 		// level 2
 		result.appendChild(next, "level2-0");
 		next = result.appendChild(next, "level2-1");
-		Tree.Node<String> level2_1 = next;
+		Node<String> level2_1 = next;
 		// level 3
 		next = result.appendChild(next, "level3-0");
-		Tree.Node<String> level3_0 = next;
+		Node<String> level3_0 = next;
 		result.appendChild(next, "level4-0");
 		next = result.appendChild(next, "level4-1");
 		next = result.appendChild(next, "level5-0");
