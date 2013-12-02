@@ -34,7 +34,7 @@ public interface Cache<K, V> {
 	 * @param entry
 	 *            a cached entry
 	 */
-	public abstract void put(final K key, final V entry);
+	public void put(final K key, final V entry);
 
 	/**
 	 * Find entry in memory cache
@@ -43,6 +43,7 @@ public interface Cache<K, V> {
 	 *            the cache key
 	 * @return cached entry, or null if no such element in cache
 	 */
-	public abstract V find(final K key);
-
+	public  V find(final K key);
+	
+	public V find(final K key, CacheLoader<K,V> loader);
 }

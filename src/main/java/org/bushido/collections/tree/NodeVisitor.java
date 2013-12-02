@@ -7,6 +7,10 @@ package org.bushido.collections.tree;
  * @param <T> type of tree
  */
 public interface NodeVisitor<T> {
+	/**
+	 * Callback to be applied for each node in tree 
+	 * @param node
+	 */
 	public void visitNode(Node<T> node);
 }
 

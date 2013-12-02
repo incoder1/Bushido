@@ -14,13 +14,12 @@
  */
 package org.bushido.collections.tree;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bushido.collections.queues.Queues;
 import org.bushido.collections.queues.Stack;
@@ -86,7 +85,7 @@ public class Tree<T> implements Iterable<Node<T>> {
 	}
 
 	/**
-	 * Creates an append a child node to base node
+	 * Creates and append a child node to base node
 	 * 
 	 * @param parent
 	 *            parent node
@@ -379,14 +378,13 @@ public class Tree<T> implements Iterable<Node<T>> {
 	 * @return new list from tree
 	 */
 	public List<T> asList() {
-		final ArrayList<T> result = new ArrayList<T>();
+		final LinkedList<T> result = new LinkedList<T>();
 		this.forEachNode(new NodeVisitor<T>() {
 			@Override
 			public void visitNode(Node<T> value) {
 				result.add(value.getValue());
 			}
 		});
-		result.trimToSize();
 		return result;
 	}
 
@@ -396,15 +394,15 @@ public class Tree<T> implements Iterable<Node<T>> {
 	 * @return tree nodes count
 	 */
 	public int size() {
-		final AtomicInteger result = new AtomicInteger(0);
+		final int result[] = {0};
 		final NodeVisitor<T> callback = new NodeVisitor<T>() {
 			@Override
 			public void visitNode(Node<T> node) {
-				result.incrementAndGet();
+				result[0] += 1;
 			}
 		};
 		this.forEachNode(callback);
-		return result.get();
+		return result[0];
 	}
 
 	/**
