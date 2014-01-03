@@ -17,7 +17,7 @@ package org.bushido.collections.queues;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Tread safe single linked list {@link Stack} implementation.
+ * Tread safe single linked list based {@link Stack} implementation.
  * 
  * @author Victor_Gubin
  * 

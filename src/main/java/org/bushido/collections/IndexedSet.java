@@ -216,7 +216,7 @@ public class IndexedSet<T> extends AbstractSet<T> implements Cloneable,
 	}
 
 	/**
-	 * Reconstitute the {@code IndexedSet} instance from a stream (that is,
+	 * Reconstitutes the {@code IndexedSet} instance from a stream (that is,
 	 * deserialize it).
 	 */
 	private void readObject(final ObjectInputStream s)

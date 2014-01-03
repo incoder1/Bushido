@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bushido.collections.SList;
 import org.bushido.collections.queues.Queues;
 import org.bushido.collections.queues.Stack;
 
@@ -378,7 +379,7 @@ public class Tree<T> implements Iterable<Node<T>> {
 	 * @return new list from tree
 	 */
 	public List<T> asList() {
-		final LinkedList<T> result = new LinkedList<T>();
+		final List<T> result = new SList<T>();
 		this.forEachNode(new NodeVisitor<T>() {
 			@Override
 			public void visitNode(Node<T> value) {

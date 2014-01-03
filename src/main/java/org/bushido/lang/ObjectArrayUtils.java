@@ -23,15 +23,15 @@ public final class ObjectArrayUtils {
 	 */
 	public static <T> void compact(final T[] array) {
 		if (null != array && array.length > 0) {
-			int index = notEmptyLength(0, array);
+			int index = findNotEmptySequence(0, array);
 			int offset = 0;
 			int moveBlockSize = 0;
 			while (index <= array.length - 1) {
 				offset += findNullSequence((index + offset + moveBlockSize),
 						array);
 				index += moveBlockSize;
-				moveBlockSize = notEmptyLength(index + offset, array);
-				// done
+				moveBlockSize = findNotEmptySequence(index + offset, array);
+				// no more filled elements
 				if (0 == moveBlockSize) {
 					break;
 				}
@@ -44,7 +44,8 @@ public final class ObjectArrayUtils {
 
 	private static <T> void swap(final T[] array, int start, final int offseet,
 			int size) {
-		for (int i = start; i < start + size; i++) {
+		final int lastBlockIndex = start + size;
+		for (int i = start; i < lastBlockIndex; i++) {
 			array[i] = array[i + offseet];
 			array[i + offseet] = null;
 		}
@@ -86,7 +87,7 @@ public final class ObjectArrayUtils {
 	/*
 	 * continues not empty block
 	 */
-	private static <T> int notEmptyLength(int startIndex, T[] array) {
+	private static <T> int findNotEmptySequence(int startIndex, T[] array) {
 		int result = 0;
 		for (int i = startIndex; (i < array.length) && (null != array[i]); i++) {
 			++result;

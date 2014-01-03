@@ -17,9 +17,9 @@ package org.bushido.collections.queues;
 /**
  * A collection designed for holding elements prior to processing.
  * 
- * @author
+ * @author Victor Gubin
  * 
- * @param <T>
+ * @param <T> queue element type
  */
 public interface AbstractQueue<T> {
 	/**
