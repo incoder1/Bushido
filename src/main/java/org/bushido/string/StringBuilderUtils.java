@@ -51,16 +51,16 @@ public final class StringBuilderUtils {
 	 * @see String#trim()
 	 */
 	public static void trim(final StringBuilder src) {
-		int i = 0;
-		while ((i < src.length()) && Character.isWhitespace(src.charAt(i))) {
-			++i;
-		}
-		src.delete(0, i);
-		i = src.length() - 1;
+		int i = src.length() - 1;
 		while (i > 0 && Character.isWhitespace(src.charAt(i))) {
 			--i;
 		}
 		src.delete(i + 1, src.length());
+		i = 0;
+		while ((i < src.length()) && Character.isWhitespace(src.charAt(i))) {
+			++i;
+		}
+		src.delete(0, i);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class StringBuilderUtils {
 	}
 
 	/**
-	 * Removes all whitespaces from the string buffer
+	 * Removes all whitespace characters from the string buffer
 	 * 
 	 * @param src
 	 *            source {@link StringBuilder} to be modified
