@@ -61,7 +61,7 @@ public class SLRUCache<K, V> implements Cache<K, V> {
 				if (protectedSegment.canPut()) {
 					this.protectedSegment.put(result);
 				} else {
-					CacheEntry<K, V> lru = this.protectedSegment.extrude();
+					final CacheEntry<K, V> lru = this.protectedSegment.extrude();
 					trialSegment.put(lru);
 					protectedSegment.put(result);
 				}
@@ -70,6 +70,17 @@ public class SLRUCache<K, V> implements Cache<K, V> {
 		
 		}
 		return null != result ? result.getValue() : null;
+	}
+	
+	@Override
+	public V find(K key,final CacheLoader<K, V> loader) {
+		if(null == loader) {
+			throw new IllegalArgumentException("Loader can not be null");
+		}
+		if(null == this.find(key)) {
+			this.put(key, loader.load(key));
+		}
+		return null;
 	}
 
 	public int trialSize() {
@@ -127,7 +138,7 @@ public class SLRUCache<K, V> implements Cache<K, V> {
 		public CacheEntry<K, V> extrude() {
 			// extrude last recently used
 			final CacheEntry<K, V> result = index.first();
-			remove(result);
+			this.remove(result);
 			return result;
 		}
 	}

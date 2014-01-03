@@ -49,10 +49,10 @@ public class QueueTest {
 	@Test
 	public void testSize() {
 		final Queue<Integer> queue = Queues.fifoQueue();
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 100; i++) {
 			queue.offer(i);
 		}
-		assertEquals("Wrong size",5, queue.size());
+		assertEquals("Wrong size",100, queue.size());
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ public class QueueTest {
 			public Void call() throws Exception {
 				queue.offer(count.incrementAndGet());
 				// now another thread should wait a lock until peek release it
-				assertEquals("Synchronization not working", Integer.valueOf(count.get()), queue.peek());
+				assertEquals("Synchronization not working", Integer.valueOf(count.incrementAndGet()), queue.peek());
 				return null;
 			}
 		};

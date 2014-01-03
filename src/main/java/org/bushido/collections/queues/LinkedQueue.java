@@ -21,8 +21,8 @@ class LinkedQueue<T> implements Queue<T> {
 
 	private final Lock lock;
 
-	private Entry<T> head;
-	private Entry<T> tail;
+	private volatile Entry<T> head;
+	private volatile Entry<T> tail;
 
 	LinkedQueue() {
 		this.lock = new ReentrantLock(true);
@@ -32,26 +32,16 @@ class LinkedQueue<T> implements Queue<T> {
 
 	@Override
 	public boolean isEmpty() {
-		lock.lock();
-		try {
-			return this.head == null;
-		} finally {
-			lock.unlock();
-		}
+		return this.head == null;
 	}
 
 	@Override
 	public long size() {
-		lock.lock();
-		try {
-			long result = 0;
-			for (Entry<T> it = this.head; it != null; it = it.getPrev()) {
-				++result;
-			}
-			return result;
-		} finally {
-			lock.unlock();
+		long result = 0;
+		for (Entry<T> it = this.head; it != null; it = it.getPrev()) {
+			++result;
 		}
+		return result;
 	}
 
 	@Override
@@ -67,16 +57,31 @@ class LinkedQueue<T> implements Queue<T> {
 
 	@Override
 	public void offer(T element) {
+		if (null == this.head) {
+			lock.lock();
+			try {
+				if (null == this.head) {
+					this.tail = new Entry<T>(element);
+					this.head = tail;
+				} else {
+					final Entry<T> prevTail = this.tail;
+					this.tail = new Entry<T>(element);
+					prevTail.setPrev(this.tail);
+				}
+			} finally {
+				lock.unlock();
+			}
+		} else {
+			offerNotEmpty(element);
+		}
+	}
+
+	private final void offerNotEmpty(T element) {
 		lock.lock();
 		try {
-			if (null == this.head ) {
-				this.tail = new Entry<T>(element);
-				this.head = tail;
-			} else {
-				final Entry<T> prevTail = this.tail;
-				this.tail = new Entry<T>(element);
-				prevTail.setPrev(this.tail);
-			}
+			final Entry<T> prevTail = this.tail;
+			this.tail = new Entry<T>(element);
+			prevTail.setPrev(this.tail);
 		} finally {
 			lock.unlock();
 		}
@@ -84,27 +89,33 @@ class LinkedQueue<T> implements Queue<T> {
 
 	@Override
 	public T poll() {
-		lock.lock();
-		try {
-			T result = null;
-			if (this.head != null) {
-				result = this.head.getValue();
-				this.head = this.head.getPrev();
+		T result = null;
+		if (this.head != null) {
+			lock.lock();
+			try {
+				if (this.head != null) {
+					result = this.head.getValue();
+					this.head = this.head.getPrev();
+				}
+			} finally {
+				lock.unlock();
 			}
-			return result;
-		} finally {
-			lock.unlock();
 		}
+		return result;
 	}
 
 	@Override
 	public T peek() {
-		lock.lock();
-		try {
-			return this.head != null ? this.head.getValue() : null;
-		} finally {
-			lock.unlock();
+		T result = null;
+		if (this.head != null) {
+			lock.lock();
+			try {
+				result = this.head.getValue();
+			} finally {
+				lock.unlock();
+			}
 		}
+		return result;
 	}
 
 	private static final class Entry<T> {

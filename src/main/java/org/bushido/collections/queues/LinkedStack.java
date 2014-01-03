@@ -14,87 +14,61 @@
  */
 package org.bushido.collections.queues;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Tread safe single linked list {@link Stack} implementation.
+ * 
+ * @author Victor_Gubin
+ * 
+ * @param <T>
+ *            stack element size
+ */
 class LinkedStack<T> implements Stack<T> {
 
-	private final Lock lock;
-
-	private Entry<T> head;
+	private AtomicReference<Entry<T>> head;
 
 	public LinkedStack() {
-		this.lock = new ReentrantLock(true);
-		this.head = null;
+		this.head = new AtomicReference<Entry<T>>(null);
 	}
 
 	@Override
 	public void push(final T element) {
-		lock.lock();
-		try {
-			this.head = new Entry<T>(element, this.head);
-		} finally {
-			lock.unlock();
-		}
+		this.head.getAndSet(new Entry<T>(element, this.head.get()));
 	}
 
 	@Override
 	public T pop() {
+		return this.head.getAndSet(this.head.get().getNext()).getValue();
+	}
+
+	@Override
+	public T peek() {
 		T result = null;
-		if (!isEmpty()) {
-			lock.lock();
-			try {
-				result = this.head.getValue();
-				this.head = this.head.getNext();
-			} finally {
-				lock.unlock();
-			}
+		if (null != this.head.get()) {
+			result = this.head.get().getValue();
 		}
 		return result;
 	}
 
 	@Override
-	public T peek() {
-		lock.lock();
-		try {
-			return this.head.getValue();
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	@Override
 	public long size() {
 		long result = 0;
-		lock.lock();
-		try {
-			for (Entry<T> it = this.head; it != null; it = it.getNext()) {
-				++result;
-			}
-		} finally {
-			lock.unlock();
+		for (Entry<T> it = this.head.get(); it != null; it = it.getNext()) {
+			++result;
 		}
 		return result;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		lock.lock();
-		try {
-			return null == this.head;
-		} finally {
-			lock.unlock();
-		}
+		return null == this.head.get();
 	}
 
 	@Override
 	public void clean() {
-		lock.lock();
-		try {
-			this.head = null;
-		} finally {
-			lock.unlock();
-		}
+		// current head is lost, object should be garbage collected
+		this.head.compareAndSet(this.head.get(), null);
 	}
 
 	private static final class Entry<T> {

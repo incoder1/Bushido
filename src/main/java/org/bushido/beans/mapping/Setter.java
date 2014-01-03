@@ -14,8 +14,10 @@
  */
 package org.bushido.beans.mapping;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Marks getter for injecting return value to {@link #value()} detsination
@@ -25,6 +27,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Victor Gubin
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface Setter {
 	/**
 	 * Contains name of the destination setter method

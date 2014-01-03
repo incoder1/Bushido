@@ -49,7 +49,6 @@ public class PerformanceTest {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Direct import/export time is "
 				+ (endTime - startTime) + " ms");
-		System.gc();
 	}
 
 	private static void bushidoSpeedTest() {
@@ -62,7 +61,6 @@ public class PerformanceTest {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Importer mapping time is " + (endTime - startTime)
 				+ " ms");
-		System.gc();
 
 		startTime = System.currentTimeMillis();
 		final Injector<InjectBean, Level0> exporter = factory.createExporter(
@@ -70,7 +68,6 @@ public class PerformanceTest {
 		endTime = System.currentTimeMillis();
 		System.out.println("Exporter mapping time is " + (endTime - startTime)
 				+ " ms");
-		System.gc();
 
 		final Level0 level0 = createNestedInstance();
 
