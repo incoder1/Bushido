@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Victor_Gubin
  * 
  * @param <T>
- *            stack element size
+ *            stack element type
  */
 class LinkedStack<T> implements Stack<T> {
 
