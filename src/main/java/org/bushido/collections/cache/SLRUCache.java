@@ -77,10 +77,12 @@ public class SLRUCache<K, V> implements Cache<K, V> {
 		if(null == loader) {
 			throw new IllegalArgumentException("Loader can not be null");
 		}
+		V result = this.find(key);
 		if(null == this.find(key)) {
-			this.put(key, loader.load(key));
+			result = loader.load(key);
+			this.put(key, result);
 		}
-		return null;
+		return result;
 	}
 
 	public int trialSize() {
