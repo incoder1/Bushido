@@ -1,12 +1,9 @@
 package org.bushido.collections;
 
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.bushido.collections.cache.Cache;
 import org.bushido.collections.cache.CacheLoader;
 import org.bushido.collections.cache.SLRUCache;
+
 
 public class CacheDemo {
 

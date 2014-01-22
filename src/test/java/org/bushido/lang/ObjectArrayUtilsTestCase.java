@@ -16,7 +16,7 @@ public class ObjectArrayUtilsTestCase {
 		}
 		return result;
 	}
-
+	
 	@Test
 	public void testCompact() {
 		final Byte src[] = { null, 0, 1, 2, null, 3, null, null, 4, 5, 6, null,

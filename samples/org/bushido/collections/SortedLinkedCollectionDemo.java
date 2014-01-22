@@ -5,8 +5,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 
-import org.bushido.collections.skeeplist.SkeepList;
-
 // Recreate accordig the SkeepList
 public class SortedLinkedCollectionDemo {
 

@@ -15,7 +15,8 @@
 package org.bushido.collections.cache;
 
 /**
- * Collections of this type implements cache memory block in RAM of different strategies 
+ * Collections of this type implements cache memory block in RAM of different
+ * strategies
  * 
  * @author Victor Gubin
  * 
@@ -43,7 +44,16 @@ public interface Cache<K, V> {
 	 *            the cache key
 	 * @return cached entry, or null if no such element in cache
 	 */
-	public  V find(final K key);
-	
-	public V find(final K key, CacheLoader<K,V> loader);
+	public V find(final K key);
+
+	/**
+	 * Find entry in memory cache
+	 * 
+	 * @param key
+	 *            the cache key
+	 * @param loader
+	 *            implementor would be used to add new value into cache
+	 * @return cached entry, or null if no such element in cache
+	 */
+	public V find(final K key, CacheLoader<K, V> loader);
 }
