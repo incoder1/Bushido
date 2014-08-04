@@ -76,14 +76,14 @@ final class ImportMappingScanner extends AbstractMappingScanner {
 				if (null != convertor) {
 					this.getConvetersMapping().put(it, convertor);
 				}
-				// auto resolve names if compliant method signatures
-			} else if (this.compilantSetter(destination, it)) {
+				// auto resolve names if complaint method signatures
+			} else if (this.complaintSetter(destination, it)) {
 				// ignore Transient setters
 				if (null != it.getAnnotation(Transient.class)) {
 					continue;
 				}
-				final Method getter = this.findCompliantGetter(it, src);
-				// just skip if method is not compliant
+				final Method getter = this.findComplaintGetter(it, src);
+				// just skip if method is not complaint
 				if (getter == null) {
 					continue;
 				}
@@ -102,7 +102,7 @@ final class ImportMappingScanner extends AbstractMappingScanner {
 		return new Mapping(this.getMethodMapping(), this.getConvetersMapping());
 	}
 
-	private boolean compilantSetter(final ImportDestination destination,
+	private boolean complaintSetter(final ImportDestination destination,
 			final Method method) {
 		return destination.compliant() && method.getName().startsWith("set")
 				&& method.getParameterTypes().length == 1;
@@ -131,7 +131,7 @@ final class ImportMappingScanner extends AbstractMappingScanner {
 		return result;
 	}
 
-	private Method findCompliantGetter(final Method setter, final Class<?> src) {
+	private Method findComplaintGetter(final Method setter, final Class<?> src) {
 		final String signature = setter.getName().substring(3);
 		final String regSignature = "get" + signature;
 		final String boolSignature = "is" + signature;

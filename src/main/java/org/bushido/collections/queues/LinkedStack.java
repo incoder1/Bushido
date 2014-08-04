@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Tread safe single linked list based {@link Stack} implementation.
  * 
+*  Treiber stack implementation
+ * 
  * @author Victor_Gubin
  * 
  * @param <T>
@@ -26,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 class LinkedStack<T> implements Stack<T> {
 
-	private AtomicReference<Entry<T>> head;
+	private AtomicReference< Entry<T> > head;
 
 	public LinkedStack() {
 		this.head = new AtomicReference<Entry<T>>(null);
@@ -34,12 +36,25 @@ class LinkedStack<T> implements Stack<T> {
 
 	@Override
 	public void push(final T element) {
-		this.head.getAndSet(new Entry<T>(element, this.head.get()));
+		Entry<T> newHead = new Entry<T>(element, null);
+        while (true) {
+            Entry<T> oldHead = this.head.get();
+            newHead.setNext(oldHead);
+            if (head.compareAndSet(oldHead, newHead)) {
+                break;
+            }
+        }
 	}
 
 	@Override
 	public T pop() {
-		return this.head.getAndSet(this.head.get().getNext()).getValue();
+		while (true) {
+			Entry<T> oldHead = this.head.get();
+            Entry<T> newHead = oldHead.getNext();
+            if (head.compareAndSet(oldHead, newHead)) {
+                return oldHead.getValue();
+            }
+        }
 	}
 
 	@Override
@@ -67,13 +82,13 @@ class LinkedStack<T> implements Stack<T> {
 
 	@Override
 	public void clean() {
-		// current head is lost, object should be garbage collected
+		// current head is lost, objects should be garbage collected
 		this.head.compareAndSet(this.head.get(), null);
 	}
 
 	private static final class Entry<T> {
 		private final T value;
-		private final Entry<T> next;
+		private Entry<T> next;
 
 		public Entry(final T value, final Entry<T> next) {
 			this.value = value;
@@ -86,6 +101,10 @@ class LinkedStack<T> implements Stack<T> {
 
 		public Entry<T> getNext() {
 			return next;
+		}
+		
+		public void setNext(final Entry<T> newNext) {
+			this.next = newNext;
 		}
 
 	}

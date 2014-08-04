@@ -14,6 +14,10 @@
  */
 package org.bushido.string;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 /**
  * Utility class for manipulating {@link StringBuilder} like {@link String}
  * 
@@ -114,7 +118,17 @@ public final class StringBuilderUtils {
 			}
 		}
 	}
-
+	
+	public void replace(final String regex,final String replacement,final StringBuffer source, boolean all) {
+		Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(source);
+		if(all) {
+			matcher.replaceAll(replacement);
+		} else {
+			matcher.replaceFirst(replacement);
+		}
+	}
+	
 	/*
 	 * Avoid this class instance creation
 	 */
