@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.bushido.collections.cache.slru.SLRUCache;
 import org.junit.Test;
 
 public class SLRUCacheTestCase {

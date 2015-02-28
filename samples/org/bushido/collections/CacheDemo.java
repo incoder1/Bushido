@@ -2,7 +2,7 @@ package org.bushido.collections;
 
 import org.bushido.collections.cache.Cache;
 import org.bushido.collections.cache.CacheLoader;
-import org.bushido.collections.cache.SLRUCache;
+import org.bushido.collections.cache.slru.SLRUCache;
 
 
 public class CacheDemo {
